@@ -5,11 +5,11 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=%i
-WorkingDirectory=/opt/bot-price-alerts
+User=root
+WorkingDirectory=/home/bot-price-alerts
 Environment=TELEGRAM_BOT_TOKEN=replace_me
-Environment=TELEGRAM_DB_PATH=/opt/bot-price-alerts/bot.db
-ExecStart=/usr/local/go/bin/go run .
+Environment=TELEGRAM_DB_PATH=/home/bot-price-alerts/bot.db
+ExecStart=/usr/bin/go run .
 Restart=on-failure
 RestartSec=5
 StandardOutput=append:/var/log/bot-price-alerts.log

@@ -40,6 +40,8 @@ type priceResponse map[string]struct {
 }
 
 func main() {
+	loadEnvFile(".env")
+
 	token := os.Getenv("TELEGRAM_BOT_TOKEN")
 	if token == "" {
 		log.Fatal("TELEGRAM_BOT_TOKEN is not set")
@@ -419,4 +421,38 @@ func shouldReplyWithPrices(msg *tgbotapi.Message) bool {
 		return true
 	}
 	return false
+}
+
+func loadEnvFile(path string) {
+	f, err := os.Open(path)
+	if err != nil {
+		return
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		parts := strings.SplitN(line, "=", 2)
+		if len(parts) != 2 {
+			continue
+		}
+		key := strings.TrimSpace(parts[0])
+		val := strings.TrimSpace(parts[1])
+		if key == "" {
+			continue
+		}
+		if len(val) >= 2 && ((val[0] == '"' && val[len(val)-1] == '"') || (val[0] == '\'' && val[len(val)-1] == '\'')) {
+			val = val[1 : len(val)-1]
+		}
+		if os.Getenv(key) == "" {
+			_ = os.Setenv(key, val)
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		log.Printf("env file scan error: %v", err)
+	}
 }
