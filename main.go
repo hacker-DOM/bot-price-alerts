@@ -143,8 +143,10 @@ func handleCommand(chatID int64, command string) error {
 		}
 		_, err := bot.Send(tgbotapi.NewMessage(chatID, fmt.Sprintf("Status: %s to hourly alerts.", status)))
 		return err
+	case "/price", "/prices", "/ping":
+		return sendCurrentPrices(chatID)
 	default:
-		_, err := bot.Send(tgbotapi.NewMessage(chatID, "Commands: /start or /alerts_on, /stop or /alerts_off, /status"))
+		_, err := bot.Send(tgbotapi.NewMessage(chatID, "Commands: /start or /alerts_on, /stop or /alerts_off, /status, /price"))
 		return err
 	}
 }
